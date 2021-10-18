@@ -3,8 +3,8 @@
     "description": "Collapse unimportant posts",
     "keywords": [
         "flarum",
-        "shadow",
-        "ban"
+        "collapse",
+        "posts"
     ],
     "type": "flarum-extension",
     "license": "MIT",

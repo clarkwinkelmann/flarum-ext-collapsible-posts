@@ -1,4 +1,4 @@
-# Shadow Ban
+# Collapsible Posts
 
 [![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/clarkwinkelmann/flarum-ext-collapsible-posts/blob/master/LICENSE.md) [![Latest Stable Version](https://img.shields.io/packagist/v/clarkwinkelmann/flarum-ext-collapsible-posts.svg)](https://packagist.org/packages/clarkwinkelmann/flarum-ext-collapsible-posts) [![Total Downloads](https://img.shields.io/packagist/dt/clarkwinkelmann/flarum-ext-collapsible-posts.svg)](https://packagist.org/packages/clarkwinkelmann/flarum-ext-collapsible-posts) [![Donate](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/clarkwinkelmann)
 
