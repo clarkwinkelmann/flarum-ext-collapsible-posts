@@ -1,0 +1,42 @@
+{
+    "name": "clarkwinkelmann/flarum-ext-collapsible-posts",
+    "description": "Collapse unimportant posts",
+    "keywords": [
+        "flarum",
+        "shadow",
+        "ban"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "require": {
+        "flarum/core": "^1.0"
+    },
+    "authors": [
+        {
+            "name": "Clark Winkelmann",
+            "email": "clark.winkelmann@gmail.com",
+            "homepage": "https://clarkwinkelmann.com/",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/clarkwinkelmann/flarum-ext-collapsible-posts/issues",
+        "source": "https://github.com/clarkwinkelmann/flarum-ext-collapsible-posts"
+    },
+    "autoload": {
+        "psr-4": {
+            "ClarkWinkelmann\\CollapsiblePosts\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Collapsible Posts",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-arrows-alt-v",
+                "backgroundColor": "#684ba6",
+                "color": "#fff"
+            }
+        }
+    }
+}

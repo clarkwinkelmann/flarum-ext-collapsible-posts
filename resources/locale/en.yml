@@ -1,0 +1,13 @@
+clarkwinkelmann-collapsible-posts:
+    admin:
+        permission:
+            collapse: Collapse posts
+    forum:
+        postControl:
+            collapse: Collapse as off-topic
+            uncollapse: Uncollapse post
+        badge:
+            post: Collapsed
+        stream:
+            hidden: "{count, plural, one {# post hidden as off-topic} other {# posts hidden as off-topic}}"
+            load: Load more
