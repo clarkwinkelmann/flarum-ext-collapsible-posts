@@ -1,13 +1,23 @@
 clarkwinkelmann-collapsible-posts:
     admin:
+        settings:
+            reasons: Reasons
+            header:
+                key: Unique database key
+                label: Label
+                explanation: Custom explanation message
+            add: New reason
         permission:
             collapse: Collapse posts
     forum:
         postControl:
-            collapse: Collapse as off-topic
-            uncollapse: Uncollapse post
+            collapse: Collapse
+            uncollapse: (Un)collapse
+        modal:
+            title: Collapse post
+            uncollapse: Uncollapse
         badge:
             post: Collapsed
         stream:
-            hidden: "{count, plural, one {# post hidden as off-topic} other {# posts hidden as off-topic}}"
+            hidden: "{count, plural, one {# post hidden as {reason}} other {# posts hidden as {reason}}}"
             load: Load more

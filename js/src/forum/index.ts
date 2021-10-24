@@ -2,12 +2,12 @@ import {extend, override} from 'flarum/common/extend';
 import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import ItemList from 'flarum/common/utils/ItemList';
-import Discussion from 'flarum/common/models/Discussion';
 import Post from 'flarum/common/models/Post';
 import PostControls from 'flarum/forum/utils/PostControls';
 import CommentPost from 'flarum/forum/components/CommentPost';
-
-const expandedPostIds: string[] = [];
+import CollapseModal from './components/CollapseModal';
+import ExpandedStore from './utils/ExpandedStore';
+import retrieveTranslation from './utils/retrieveTranslation';
 
 app.initializers.add('clarkwinkelmann-collapsible-posts', () => {
     extend(PostControls, 'moderationControls', function (items: ItemList, post: Post) {
@@ -15,31 +15,21 @@ app.initializers.add('clarkwinkelmann-collapsible-posts', () => {
             return;
         }
 
-        const isCollapsed = post.attribute('isCollapsed');
-
         items.add('collapse', Button.component({
-            icon: isCollapsed ? 'fas fa-arrows-alt-v' : 'fas fa-compress-alt',
+            icon: 'fas fa-arrows-alt-v',
             onclick() {
-                // Add the soon to be collapsed post to the list so the stream doesn't collapse right after click
-                // (and would show multiple buttons one below another)
-                if (expandedPostIds.indexOf(post.id()) === -1) {
-                    expandedPostIds.push(post.id());
-                }
-
-                post.save({
-                    isCollapsed: !isCollapsed,
-                }).then(() => {
-                    m.redraw();
+                app.modal.show(CollapseModal, {
+                    post,
                 });
             },
-        }, app.translator.trans('clarkwinkelmann-collapsible-posts.forum.postControl.' + (isCollapsed ? 'uncollapse' : 'collapse'))));
+        }, app.translator.trans('clarkwinkelmann-collapsible-posts.forum.postControl.' + (post.attribute('collapsedReason') ? 'uncollapse' : 'collapse'))));
     });
 
     extend(CommentPost.prototype, 'headerItems', function (this: CommentPost, items: ItemList) {
         // @ts-ignore missing type-hint in Flarum
         const {post} = this.attrs;
 
-        if (post.attribute('isCollapsed')) {
+        if (post.attribute('collapsedReason')) {
             items.add('collapsed', m('span.CollapsedPostBadge', app.translator.trans('clarkwinkelmann-collapsible-posts.forum.badge.post')));
         }
     });
@@ -49,8 +39,8 @@ app.initializers.add('clarkwinkelmann-collapsible-posts', () => {
         const {post} = this.attrs;
 
         this.subtree!.check(
-            () => post.attribute('isCollapsed'),
-            () => expandedPostIds.indexOf(post.id()) === -1
+            () => post.attribute('collapsedReason'),
+            () => ExpandedStore.isRevealed(post)
         );
     });
 
@@ -58,15 +48,20 @@ app.initializers.add('clarkwinkelmann-collapsible-posts', () => {
         // @ts-ignore missing type-hint in Flarum
         const {post} = this.attrs;
 
-        if (post.attribute('isCollapsed') && expandedPostIds.indexOf(post.id()) === -1) {
+        // We want to include the current hidden post in the collapse count
+        const collapsedCount = post.attribute('collapsedCount') + 1;
+        const reasonDefinition = (app.forum.attribute('collapsiblePostReasons') || []).find(reason => reason.key === post.attribute('collapsedReason'));
+
+        if (post.attribute('collapsedReason') && !ExpandedStore.isRevealed(post)) {
             return m('.CollapsedPost', [
-                m('.CollapsedPostText', app.translator.trans('clarkwinkelmann-collapsible-posts.forum.stream.hidden', {
-                    count: post.attribute('collapsedCount') + 1,
+                m('.CollapsedPostText', reasonDefinition.explanation ? retrieveTranslation(reasonDefinition.explanation).replace('{count}', collapsedCount) : app.translator.trans('clarkwinkelmann-collapsible-posts.forum.stream.hidden', {
+                    count: collapsedCount,
+                    reason: reasonDefinition ? retrieveTranslation(reasonDefinition.label) : post.attribute('collapsedReason'),
                 })),
                 Button.component({
                     className: 'Button',
                     onclick() {
-                        expandedPostIds.push(post.id());
+                        ExpandedStore.alwaysReveal(post);
 
                         const discussion = post.discussion();
 
@@ -76,8 +71,6 @@ app.initializers.add('clarkwinkelmann-collapsible-posts', () => {
                                 page: {after: post.number()},
                             })
                             .then((expandedPosts: Post[]) => {
-                                console.log(expandedPosts);
-
                                 expandedPosts.slice().reverse().forEach((expandedPost, index) => {
                                     // If the last post doesn't have a collapseCount value of zero, it means there will be more posts to expand
                                     // so we don't expand it automatically
@@ -85,7 +78,7 @@ app.initializers.add('clarkwinkelmann-collapsible-posts', () => {
                                         return;
                                     }
 
-                                    expandedPostIds.push(expandedPost.id());
+                                    ExpandedStore.alwaysReveal(expandedPost);
                                 });
 
                                 const postStore = discussion.data.relationships.posts.data as { type: string, id: string }[];
@@ -105,8 +98,6 @@ app.initializers.add('clarkwinkelmann-collapsible-posts', () => {
                                     // we'll skip any post that is already in the list, which likely includes the first one
                                     postStore.splice(index + 1, 0, ...newPosts);
 
-                                    //TODO: update stream end index
-
                                     const stream = app.current.get('stream');
 
                                     if (stream) {
@@ -117,20 +108,12 @@ app.initializers.add('clarkwinkelmann-collapsible-posts', () => {
                             });
                     },
                 }, app.translator.trans('clarkwinkelmann-collapsible-posts.forum.stream.load')),
+                // Some extensions like flarum/mentions expect .Post-body to always exist in a CommentPost
+                // So we'll add it here but hide it with CSS
+                m('.Post-body'),
             ]);
         } else {
             return original();
         }
     });
-
-    /*Discussion.prototype.originalPostIds = Discussion.prototype.postIds;
-
-    override(Discussion.prototype, 'postIds', function (this: Discussion, original: () => string[]) {
-        // Cast IDs to string for comparison
-        const collapsedIds = (this.attribute('collapsedIds') as number[]).map(id => id + '');
-
-        const allIds = original();
-        //console.log(allIds, collapsedIds);
-        return allIds.filter(id => collapsedIds.indexOf(id) === -1 || expandedPostIds.indexOf(id) !== -1);
-    });*/
 });

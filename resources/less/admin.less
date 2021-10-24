@@ -1,0 +1,47 @@
+.clarkwinkelmann-collapsible-posts-Page .ExtensionPage-settings {
+    .container {
+        max-width: 1000px;
+    }
+
+    table {
+        width: 100%;
+
+        td, th {
+            padding: 3px 5px;
+        }
+
+        th {
+            text-align: left;
+        }
+    }
+
+    .FormControl {
+        background: @body-bg;
+        border-color: @control-bg;
+
+        // We set the same as Flarum default, but with more specificity
+        &:focus,
+        &.focus {
+            border-color: @primary-color;
+        }
+    }
+}
+
+.ReportLocalizedInput {
+    display: flex;
+
+    .Dropdown .Button {
+        background: @body-bg;
+        border: 2px solid @control-bg;
+        border-right: none;
+        border-radius: @border-radius 0 0 @border-radius;
+        height: 36px; // To match with .FormControl
+        padding-top: 7px; // So it's kind of vertically centered
+        min-width: 70px; // So every two-letter language takes the same width
+    }
+
+    .FormControl {
+        flex-grow: 1;
+        border-radius: 0 @border-radius @border-radius 0;
+    }
+}

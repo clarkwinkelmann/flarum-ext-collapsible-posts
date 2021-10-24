@@ -10,7 +10,7 @@ class PostAttributes
     public function __invoke(PostSerializer $serializer, Post $post): array
     {
         return [
-            'isCollapsed' => !is_null($post->collapsed_reason),
+            'collapsedReason' => $post->collapsed_reason,
             'collapsedCount' => $post->collapsed_count,
             'canCollapse' => $serializer->getActor()->can('collapse', $post),
         ];

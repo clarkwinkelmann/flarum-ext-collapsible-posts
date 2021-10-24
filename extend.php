@@ -9,13 +9,21 @@ use Flarum\Post\Post;
 
 return [
     (new Extend\Frontend('admin'))
-        ->js(__DIR__ . '/js/dist/admin.js'),
+        ->js(__DIR__ . '/js/dist/admin.js')
+        ->css(__DIR__ . '/resources/less/admin.less'),
 
     (new Extend\Frontend('forum'))
         ->js(__DIR__ . '/js/dist/forum.js')
         ->css(__DIR__ . '/resources/less/forum.less'),
 
     new Extend\Locales(__DIR__ . '/resources/locale'),
+
+    (new Extend\Settings())
+        ->serializeToForum('collapsiblePostReasons', 'collapsible-posts.reasons', function ($value) {
+            $array = json_decode($value);
+
+            return is_array($array) ? $array : [];
+        }),
 
     (new Extend\Routes('api'))
         ->get('/collapsed-posts', 'collapsed-posts', Controller\ListCollapsedPosts::class),
