@@ -3,6 +3,7 @@ import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import ItemList from 'flarum/common/utils/ItemList';
 import Post from 'flarum/common/models/Post';
+import icon from 'flarum/common/helpers/icon';
 import PostControls from 'flarum/forum/utils/PostControls';
 import CommentPost from 'flarum/forum/components/CommentPost';
 import CollapseModal from './components/CollapseModal';
@@ -30,7 +31,18 @@ app.initializers.add('clarkwinkelmann-collapsible-posts', () => {
         const {post} = this.attrs;
 
         if (post.attribute('collapsedReason')) {
-            items.add('collapsed', m('span.CollapsedPostBadge', app.translator.trans('clarkwinkelmann-collapsible-posts.forum.badge.post')));
+            const explanationUrl = app.forum.attribute('collapsiblePostExplanationUrl');
+
+            items.add('collapsed', m('span.CollapsedPostBadge', [
+                app.translator.trans('clarkwinkelmann-collapsible-posts.forum.badge.post'),
+                explanationUrl ? [
+                    ' ',
+                    m('a', {
+                        href: explanationUrl,
+                        title: app.translator.trans('clarkwinkelmann-collapsible-posts.forum.stream.explanation'),
+                    }, icon('far fa-question-circle')),
+                ] : null,
+            ]));
         }
     });
 
@@ -52,12 +64,17 @@ app.initializers.add('clarkwinkelmann-collapsible-posts', () => {
         const collapsedCount = post.attribute('collapsedCount') + 1;
         const reasonDefinition = (app.forum.attribute('collapsiblePostReasons') || []).find(reason => reason.key === post.attribute('collapsedReason'));
 
+        const explanationUrl = app.forum.attribute('collapsiblePostExplanationUrl');
+
         if (post.attribute('collapsedReason') && !ExpandedStore.isRevealed(post)) {
             return m('.CollapsedPost', [
                 m('.CollapsedPostText', reasonDefinition.explanation ? retrieveTranslation(reasonDefinition.explanation).replace('{count}', collapsedCount) : app.translator.trans('clarkwinkelmann-collapsible-posts.forum.stream.hidden', {
                     count: collapsedCount,
                     reason: reasonDefinition ? retrieveTranslation(reasonDefinition.label) : post.attribute('collapsedReason'),
                 })),
+                explanationUrl ? m('.CollapsedPostExplanation', m('a', {
+                    href: explanationUrl,
+                }, app.translator.trans('clarkwinkelmann-collapsible-posts.forum.stream.explanation'))) : null,
                 Button.component({
                     className: 'Button',
                     onclick() {

@@ -23,7 +23,8 @@ return [
             $array = json_decode($value);
 
             return is_array($array) ? $array : [];
-        }),
+        })
+        ->serializeToForum('collapsiblePostExplanationUrl', 'collapsible-posts.explanationUrl'),
 
     (new Extend\Routes('api'))
         ->get('/collapsed-posts', 'collapsed-posts', Controller\ListCollapsedPosts::class),

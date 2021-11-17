@@ -102,6 +102,12 @@ app.initializers.add('clarkwinkelmann-collapsible-posts', () => {
                 ]),
             ];
         })
+        .registerSetting({
+            type: 'text',
+            setting: 'collapsible-posts.explanationUrl',
+            label: app.translator.trans(translationPrefix + 'explanationUrl'),
+            help: app.translator.trans(translationPrefix + 'explanationUrlHelp'),
+        })
         .registerPermission({
             icon: 'fas fa-arrows-alt-v',
             label: app.translator.trans('clarkwinkelmann-collapsible-posts.admin.permission.collapse'),
