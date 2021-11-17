@@ -4,15 +4,27 @@
 
 This extension allows collapsing some posts, so they don't clutter the discussion, while still keeping them accessible.
 
-This is published mostly as a **proof of concept**, there are still probably multiple ways this can break.
+Multiple collapse reasons can be created in the admin page.
+By default an "off-topic" reason message is offered.
 
-At the moment all posts are collapsed as "off-topic", but the extension is designed to add more reasons in the future.
+When multiple posts that follow each other are collapsed for the same reason, a collapse series is created.
+A series can be expanded back by group of 20 posts.
 
-I might add more features during future live streams.
+The collapse state is purely visual and doesn't prevent the user from editing or deleting their post for example.
+
+The extension uses a solution that's a bit hacky, so there might be incompatibilities with other extensions and it might break during minor Flarum updates.
+
+Known/expected issues:
+
+- You cannot permalink collapsed posts.
+- Search engines probably won't be able to index collapsed posts.
+- Users of the REST API and noscript pages will only see the first post of a collapsed series.
+- If some posts in a discussion aren't visible to everyone (deleted, under approval, shadow hidden, etc.) a collapse series might be broken in 2 for reasons the visitor cannot see. This shouldn't break the navigation but not all combinations have been tested.
+- Using database table prefixes might break the extension.
 
 ## Installation
 
-The extension is not on Packagist at this time.
+    composer require clarkwinkelmann/flarum-ext-collapsible-posts
 
 ## Support
 
@@ -29,3 +41,4 @@ Support is offered on a "best effort" basis through the Flarum community thread.
 
 - [GitHub](https://github.com/clarkwinkelmann/flarum-ext-collapsible-posts)
 - [Packagist](https://packagist.org/packages/clarkwinkelmann/flarum-ext-collapsible-posts)
+- [Discuss](https://discuss.flarum.org/d/29483)

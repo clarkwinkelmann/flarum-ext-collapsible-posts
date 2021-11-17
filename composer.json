@@ -22,7 +22,8 @@
     ],
     "support": {
         "issues": "https://github.com/clarkwinkelmann/flarum-ext-collapsible-posts/issues",
-        "source": "https://github.com/clarkwinkelmann/flarum-ext-collapsible-posts"
+        "source": "https://github.com/clarkwinkelmann/flarum-ext-collapsible-posts",
+        "forum": "https://discuss.flarum.org/d/29483"
     },
     "autoload": {
         "psr-4": {
