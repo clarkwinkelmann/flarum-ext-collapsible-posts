@@ -80,7 +80,10 @@ class ListCollapsedPosts extends ListPostsController
 
         $results = $results->getResults();
 
-        $this->loadRelations($results, $include);
+        // The third parameter is only available since Flarum 1.8
+        // It's supposed to be optional, but Flarum Mentions and Likes extension will error if it isn't provided
+        // We can provide the parameter even on Flarum versions lower than 1.8 since PHP will just ignore it
+        $this->loadRelations($results, $include, $request);
 
         return $results;
     }
