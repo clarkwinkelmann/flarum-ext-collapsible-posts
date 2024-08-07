@@ -4,6 +4,7 @@ namespace ClarkWinkelmann\CollapsiblePosts;
 
 use Flarum\Api\Serializer\PostSerializer;
 use Flarum\Extend;
+use Flarum\Post\Event\Deleted;
 use Flarum\Post\Event\Saving;
 use Flarum\Post\Post;
 
@@ -33,7 +34,8 @@ return [
         ->attributes(PostAttributes::class),
 
     (new Extend\Event())
-        ->listen(Saving::class, Listener\SavePost::class),
+        ->listen(Saving::class, Listener\SavePost::class)
+        ->listen(Deleted::class, Listener\DeletePost::class),
 
     (new Extend\Policy())
         ->modelPolicy(Post::class, Access\PostPolicy::class),
