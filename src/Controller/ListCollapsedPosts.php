@@ -95,7 +95,7 @@ class ListCollapsedPosts extends ListPostsController
         $sort = $this->extractSort($request);
         $filter = $this->extractFilter($request);
 
-        if (($number = Arr::get($queryParams, 'page.after')) > 1) {
+        if (($number = Arr::get($queryParams, 'page.after')) >= 1) {
             if (count($filter) > 1 || !isset($filter['discussion']) || $sort) {
                 throw new InvalidParameterException(
                     'You can only use page[after] with filter[discussion] and the default sort order'

@@ -53,6 +53,8 @@ class UpdateCollapseCount implements ShouldQueue
         });
 
         if ($previousPost) {
+            // If the first post is part of a collapsed series, we need to end the series so it doesn't become inaccessible
+            $previousPost->collapsed_hidden = false;
             $previousPost->save();
         }
     }
